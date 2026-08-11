@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renta Fija en Argentina — Mapa de Instrumentos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1C2B3A;--navy-soft:#26384A;
+  --gold:#B8894A;--gold-dark:#8A6534;--gold-light:#F0E4CC;
+  --text:#1A1A1A;--ts:#666666;--tss:#999999;
+  --bg:#ffffff;--bg-alt:#F7F6F3;
+  --bd:rgba(0,0,0,0.09);--bd-strong:rgba(0,0,0,0.16);
+  --green-bg:#E1F5EE;--green-t:#0F6E56;
+  --red-bg:#FCEBEB;--red-t:#A32D2D;
+  --amber-bg:#FAEEDA;--amber-t:#854F0B;
+  --blue-bg:#E6F1FB;--blue-t:#0C447C;
+  --purple-bg:#EEEDFE;--purple-t:#3C3489;
+  --r:8px;--rl:12px;
+}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.topnav{position:sticky;top:0;z-index:200;background:var(--navy);border-bottom:1px solid rgba(255,255,255,0.08)}
+.topnav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:4px;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+.topnav-inner::-webkit-scrollbar{display:none}
+.nav-brand{font-weight:700;font-size:13px;color:#fff;letter-spacing:-.2px;padding:14px 16px 14px 0;white-space:nowrap;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.1);margin-right:8px}
+.nav-brand span{color:var(--gold)}
+.nav-item{display:flex;align-items:center;gap:6px;padding:14px 11px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.4);text-decoration:none;white-space:nowrap;transition:color .15s;cursor:pointer;border-bottom:2px solid transparent}
+.nav-item:hover{color:rgba(255,255,255,0.8)}
+.nav-item.active{color:#fff;border-bottom-color:var(--gold)}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);flex-shrink:0;transition:background .15s}
+.nav-item.active .nav-dot{background:var(--gold)}
+.nav-num{font-weight:700}
+
+/* LAYOUT */
+.module{padding:3.5rem 0}
+.module-inner{max-width:820px;margin:0 auto;padding:0 1.5rem}
+.module.alt{background:var(--bg-alt)}
+.mod-head{display:flex;align-items:center;gap:14px;margin-bottom:1.75rem}
+.mod-num{font-size:40px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-2px}
+.mod-divline{width:1px;height:34px;background:var(--bd-strong)}
+.mod-tag{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--tss)}
+.mod-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.6px;line-height:1.2;margin-bottom:.6rem}
+.mod-sub{font-size:14.5px;color:var(--ts);line-height:1.7;max-width:660px;margin-bottom:2rem}
+.mod-sub strong{color:var(--text);font-weight:500}
+.sec-lbl{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:12px}
+.sec-lbl.mt{margin-top:2.5rem}
+.sec-intro{font-size:13px;color:var(--ts);line-height:1.7;margin-bottom:1.25rem;max-width:640px}
+
+/* HERO */
+.hero{background:var(--navy);color:#fff;padding:4rem 0 3.5rem}
+.hero-inner{max-width:820px;margin:0 auto;padding:0 1.5rem}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem}
+.hero-title{font-size:40px;font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:1rem}
+.hero-title span{color:var(--gold)}
+.hero-desc{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.7;max-width:600px;margin-bottom:2.75rem}
+.hero-map{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:var(--rl);overflow:hidden;margin-bottom:2.75rem}
+.map-cell{background:var(--navy);padding:16px;display:flex;flex-direction:column;gap:5px;transition:background .15s;cursor:pointer;text-decoration:none}
+.map-cell:hover{background:var(--navy-soft)}
+.map-cell-num{font-size:15px;font-weight:700;color:var(--gold)}
+.map-cell-name{font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.85);line-height:1.3}
+.map-cell-desc{font-size:10.5px;color:rgba(255,255,255,0.4);line-height:1.4}
+.hero-anchors{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:1.5rem}
+.anchor{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);padding:18px 16px}
+.anchor-num{font-size:29px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-1px;margin-bottom:8px}
+.anchor-txt{font-size:11.5px;color:rgba(255,255,255,0.6);line-height:1.5}
+.anchor-txt strong{color:rgba(255,255,255,0.92);font-weight:500}
+.hero-context{font-size:12.5px;color:rgba(255,255,255,0.4);font-style:italic;text-align:center;padding-top:.5rem}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.stat-grid.two{grid-template-columns:repeat(2,1fr)}
+.stat-card{text-align:center;padding:22px 14px;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl)}
+.stat-num{font-size:32px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-1.5px;margin-bottom:8px}
+.stat-num.sm{font-size:25px}
+.stat-num.neg{color:var(--red-t)}
+.stat-num.pos{color:var(--green-t)}
+.stat-lbl{font-size:11.5px;color:var(--ts);line-height:1.5}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border-radius:var(--rl);overflow:hidden;border:1px solid var(--bd);margin-bottom:1rem}
+.cmp-side{padding:22px 20px;text-align:center}
+.cmp-side.pos{background:var(--green-bg)}
+.cmp-side.neg{background:var(--red-bg)}
+.cmp-num{font-size:29px;font-weight:700;line-height:1;letter-spacing:-1px;margin-bottom:8px}
+.cmp-side.pos .cmp-num{color:var(--green-t)}
+.cmp-side.neg .cmp-num{color:var(--red-t)}
+.cmp-lbl{font-size:11.5px;line-height:1.5}
+.cmp-side.pos .cmp-lbl{color:var(--green-t)}
+.cmp-side.neg .cmp-lbl{color:var(--red-t)}
+.cmp-caption{text-align:center;font-size:12.5px;font-weight:500;color:var(--ts);padding-top:2px;margin-bottom:1.5rem}
+
+/* INLINE STAT */
+.inline-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem}
+.inline-stat{display:flex;align-items:center;gap:20px;padding:16px 20px;background:var(--bg);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:0 var(--r) var(--r) 0}
+.inline-num{font-size:24px;font-weight:700;color:var(--gold);white-space:nowrap;min-width:112px;letter-spacing:-1px;line-height:1;flex-shrink:0}
+.inline-txt{font-size:13px;color:var(--ts);line-height:1.55}
+.inline-txt strong{color:var(--text);font-weight:500}
+
+/* CALLOUT */
+.callout{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:1.5rem 1.75rem;margin-bottom:1.5rem}
+.callout.gold{border-left:3px solid var(--gold);border-radius:0 var(--rl) var(--rl) 0}
+.callout.warn{background:var(--amber-bg);border-color:rgba(133,79,11,0.2)}
+.callout-lead{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.5rem}
+.callout.warn .callout-lead{color:var(--amber-t)}
+.callout-body{font-size:13px;color:var(--ts);line-height:1.7}
+.callout.warn .callout-body{color:var(--amber-t)}
+.callout-body strong{color:var(--text);font-weight:500}
+.callout.warn .callout-body strong{color:var(--amber-t);font-weight:700}
+.footnote{font-size:11.5px;color:var(--tss);font-style:italic;margin-top:.75rem;line-height:1.6}
+
+/* MAPA GRID */
+.mapa-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1rem}
+.mapa-side{border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;background:var(--bg)}
+.mapa-head{padding:13px 18px;font-size:13px;font-weight:700;color:#fff;letter-spacing:-.2px}
+.mapa-head.pesos{background:var(--navy)}
+.mapa-head.usd{background:var(--green-t)}
+.mapa-sub{font-size:11px;font-weight:400;opacity:.7;display:block;margin-top:2px;letter-spacing:0}
+.mapa-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 18px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
+.mapa-item:last-child{border-bottom:none}
+.mapa-item:hover{background:var(--bg-alt)}
+.mapa-name{font-size:12.5px;color:var(--text);font-weight:500}
+.mapa-rate{font-size:12.5px;font-weight:700;color:var(--gold-dark);white-space:nowrap}
+
+/* INSTRUMENT CARDS */
+.icard{border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;background:var(--bg);margin-bottom:12px;cursor:pointer;transition:border-color .15s;scroll-margin-top:60px}
+.icard:hover{border-color:var(--bd-strong)}
+.icard.open{border-color:var(--gold)}
+.icard.ref{background:var(--bg-alt);border-style:dashed}
+.ic-top{display:flex;align-items:flex-start;gap:13px}
+.ic-ico{width:38px;height:38px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.ic-htxt{flex:1}
+.ic-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-.2px}
+.ic-sub{font-size:10.5px;color:var(--gold-dark);font-weight:700;margin-top:2px;letter-spacing:.3px;text-transform:uppercase}
+.ic-desc{font-size:12.5px;color:var(--ts);line-height:1.55;margin-top:5px}
+.ic-rate{text-align:right;flex-shrink:0}
+.ic-rate-n{font-size:19px;font-weight:700;color:var(--gold);letter-spacing:-.6px;line-height:1;white-space:nowrap}
+.ic-rate-l{font-size:9.5px;color:var(--tss);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.ic-meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.ic-mi{display:flex;flex-direction:column;gap:2px}
+.ic-ml{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--tss);font-weight:500}
+.ic-mv{font-size:12px;font-weight:700;color:var(--text)}
+.ic-mv.tax-ok{color:var(--green-t)}
+.ic-mv.tax-no{color:var(--amber-t)}
+.ic-access{font-size:11.5px;color:var(--ts);line-height:1.55;margin-top:11px;padding:10px 13px;background:var(--bg-alt);border-radius:var(--r)}
+.icard.ref .ic-access{background:rgba(0,0,0,0.03)}
+.ic-access strong{color:var(--text);font-weight:500}
+.ic-access-l{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-dark);font-weight:700;margin-bottom:3px}
+.ic-detail{display:none;margin-top:13px;padding-top:13px;border-top:1px solid var(--bd)}
+.icard.open .ic-detail{display:block}
+.ic-hint{font-size:10.5px;color:var(--tss);font-style:italic;margin-top:11px}
+.icard.open .ic-hint{display:none}
+.pc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pc-col-t{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.pc-col.pro .pc-col-t{color:var(--green-t)}
+.pc-col.con .pc-col-t{color:var(--red-t)}
+.pc-item{font-size:11.5px;line-height:1.5;margin-bottom:5px;padding-left:14px;position:relative}
+.pc-col.pro .pc-item{color:var(--green-t)}
+.pc-col.con .pc-item{color:var(--red-t)}
+.pc-item:before{position:absolute;left:0;top:0;font-weight:700}
+.pc-col.pro .pc-item:before{content:"+"}
+.pc-col.con .pc-item:before{content:"–"}
+.ic-warn{margin-top:12px;padding:13px 15px;background:var(--red-bg);border-radius:var(--r);font-size:11.5px;color:var(--red-t);line-height:1.65}
+.ic-warn strong{font-weight:700}
+.ic-warn-l{font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:4px;display:block}
+.ic-note{margin-top:12px;padding:13px 15px;background:var(--blue-bg);border-radius:var(--r);font-size:11.5px;color:var(--blue-t);line-height:1.65}
+.ic-note strong{font-weight:700}
+.ic-note-l{font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:4px;display:block}
+
+/* COMPARADOR */
+.comp-row{display:flex;align-items:center;gap:14px;margin-bottom:9px}
+.comp-lbl{font-size:12px;color:var(--text);width:160px;flex-shrink:0;line-height:1.35}
+.comp-cur{font-size:9.5px;color:var(--tss);display:block}
+.comp-track{flex:1;background:var(--bg-alt);border-radius:4px;height:32px;overflow:hidden;border:1px solid var(--bd)}
+.module.alt .comp-track{background:#eeece8}
+.comp-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 12px;min-width:96px;transition:width .6s}
+.comp-val{font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+.comp-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.comp-tab{border:1px solid var(--bd-strong);background:var(--bg);border-radius:100px;padding:8px 16px;font-size:12.5px;font-weight:500;color:var(--ts);cursor:pointer;transition:all .15s}
+.comp-tab:hover{border-color:var(--gold)}
+.comp-tab.active{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+.comp-panel{display:none}
+.comp-panel.active{display:block}
+
+/* GUIA / OBJETIVOS */
+.obj-list{display:flex;flex-direction:column;gap:12px}
+.obj{border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;background:var(--bg);display:flex;gap:18px;align-items:flex-start}
+.obj-q{flex:1}
+.obj-qt{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4}
+.obj-qd{font-size:12.5px;color:var(--ts);line-height:1.6}
+.obj-a{flex-shrink:0;width:200px;background:var(--bg-alt);border-radius:var(--r);padding:12px 14px}
+.obj-al{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-dark);font-weight:700;margin-bottom:5px}
+.obj-an{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.4}
+
+/* GLOSARIO */
+.gloss-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gitem{background:var(--bg);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:13px 16px}
+.gterm{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.gdef{font-size:11.5px;color:var(--ts);line-height:1.6}
+
+/* FOOTER */
+.foot{background:var(--navy);color:rgba(255,255,255,0.5);padding:2.5rem 1.5rem;font-size:12px;line-height:1.75}
+.foot-inner{max-width:820px;margin:0 auto;text-align:center}
+.foot-t{color:rgba(255,255,255,0.85);font-weight:700;font-size:13px;margin-bottom:.75rem}
+
+@media(max-width:680px){
+  .hero-title{font-size:29px}
+  .hero-map{grid-template-columns:1fr 1fr}
+  .hero-anchors,.stat-grid,.stat-grid.two,.mapa-col,.pc-row,.gloss-grid{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .mod-title{font-size:22px}
+  .comp-lbl{width:112px}
+  .inline-num{min-width:70px;font-size:21px}
+  .obj{flex-direction:column;gap:12px}
+  .obj-a{width:100%}
+  .ic-top{flex-wrap:wrap}
+  .ic-rate{text-align:left;width:100%;margin-top:6px}
+}
+@media print{
+  .topnav,.comp-tabs{display:none!important}
+  .icard.open .ic-detail,.comp-panel{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <div class="nav-brand">Renta Fija <span>Argentina</span></div>
+    <a class="nav-item active" data-target="s1"><span class="nav-dot"></span><span class="nav-num">01</span> Apertura</a>
+    <a class="nav-item" data-target="s2"><span class="nav-dot"></span><span class="nav-num">02</span> Contexto</a>
+    <a class="nav-item" data-target="s3"><span class="nav-dot"></span><span class="nav-num">03</span> El mapa</a>
+    <a class="nav-item" data-target="s4"><span class="nav-dot"></span><span class="nav-num">04</span> En pesos</a>
+    <a class="nav-item" data-target="s5"><span class="nav-dot"></span><span class="nav-num">05</span> En dólares</a>
+    <a class="nav-item" data-target="s6"><span class="nav-dot"></span><span class="nav-num">06</span> Comparación</a>
+    <a class="nav-item" data-target="s7"><span class="nav-dot"></span><span class="nav-num">07</span> ¿Cuál me conviene?</a>
+    <a class="nav-item" data-target="s8"><span class="nav-dot"></span><span class="nav-num">08</span> Glosario</a>
+  </div>
+</nav>
+
+<!-- S1: APERTURA -->
+<section class="hero" id="s1">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Guía de instrumentos · Mercado local</div>
+    <h1 class="hero-title">Renta fija en Argentina,<br><span>instrumento por instrumento.</span></h1>
+    <p class="hero-desc">Todo lo que se puede comprar en el mercado local para generar renta — en pesos y en dólares. Qué es cada instrumento, cuánto rinde hoy, qué riesgo tiene y para qué objetivo sirve.</p>
+
+    <div class="hero-map">
+      <a class="map-cell" data-target="s2"><span class="map-cell-num">02</span><span class="map-cell-name">Contexto</span><span class="map-cell-desc">Inflación y rendimiento real</span></a>
+      <a class="map-cell" data-target="s3"><span class="map-cell-num">03</span><span class="map-cell-name">El mapa</span><span class="map-cell-desc">Todos los instrumentos</span></a>
+      <a class="map-cell" data-target="s4"><span class="map-cell-num">04</span><span class="map-cell-name">En pesos</span><span class="map-cell-desc">Seis instrumentos</span></a>
+      <a class="map-cell" data-target="s5"><span class="map-cell-num">05</span><span class="map-cell-name">En dólares</span><span class="map-cell-desc">ONs y soberanos</span></a>
+      <a class="map-cell" data-target="s6"><span class="map-cell-num">06</span><span class="map-cell-name">Comparación</span><span class="map-cell-desc">Rendimiento vs riesgo</span></a>
+      <a class="map-cell" data-target="s7"><span class="map-cell-num">07</span><span class="map-cell-name">¿Cuál me conviene?</span><span class="map-cell-desc">Guía por objetivo</span></a>
+      <a class="map-cell" data-target="s8"><span class="map-cell-num">08</span><span class="map-cell-name">Glosario</span><span class="map-cell-desc">TNA, TEM, TIR, CER</span></a>
+      <div class="map-cell" style="cursor:default"><span class="map-cell-num" style="color:rgba(255,255,255,0.25)">·</span><span class="map-cell-name" style="color:rgba(255,255,255,0.35)">Datos</span><span class="map-cell-desc">Referencia agosto 2026</span></div>
+    </div>
+
+    <div class="hero-anchors">
+      <div class="anchor">
+        <div class="anchor-num">33,5%</div>
+        <div class="anchor-txt"><strong>inflación interanual</strong> a junio 2026. Es la vara que todo instrumento en pesos tiene que superar para no perder.</div>
+      </div>
+      <div class="anchor">
+        <div class="anchor-num">9</div>
+        <div class="anchor-txt"><strong>instrumentos distintos</strong> de renta fija accesibles desde cualquier broker local — en pesos y en dólares.</div>
+      </div>
+      <div class="anchor">
+        <div class="anchor-num">USD 100</div>
+        <div class="anchor-txt"><strong>monto mínimo</strong> para entrar a la mayoría. La renta fija no requiere capital grande.</div>
+      </div>
+    </div>
+    <div class="hero-context">Datos de referencia a agosto 2026. Las tasas del mercado argentino cambian con frecuencia.</div>
+  </div>
+</section>
+
+<!-- S2: CONTEXTO MACRO -->
+<section class="module alt" id="s2">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">02</span><div class="mod-divline"></div><span class="mod-tag">Contexto</span></div>
+    <h2 class="mod-title">Antes de elegir: nominal no es lo mismo que real</h2>
+    <p class="mod-sub">En Argentina, un instrumento puede rendir 25% anual y aun así hacerte perder plata. La única pregunta que importa no es cuánto rinde en números, sino <strong>cuánto rinde después de descontar la inflación</strong>.</p>
+
+    <div class="compare">
+      <div class="cmp-side pos">
+        <div class="cmp-num">+19%</div>
+        <div class="cmp-lbl"><strong>Rendimiento nominal</strong><br>Lo que promete un plazo fijo hoy. El número que ves en la pantalla.</div>
+      </div>
+      <div class="cmp-side neg">
+        <div class="cmp-num">–10,9%</div>
+        <div class="cmp-lbl"><strong>Rendimiento real</strong><br>Lo que queda después de descontar una inflación del 33,5% anual.</div>
+      </div>
+    </div>
+    <div class="cmp-caption">El mismo instrumento, los mismos pesos. Un año después comprás casi un 11% menos de cosas.</div>
+
+    <div class="sec-lbl mt">La vara a superar hoy</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">33,5%</div><div class="stat-lbl">inflación interanual a junio 2026 (INDEC)</div></div>
+      <div class="stat-card"><div class="stat-num sm">~2% mensual</div><div class="stat-lbl">ritmo reciente — el sendero viene desacelerando</div></div>
+      <div class="stat-card"><div class="stat-num sm">~30% anual</div><div class="stat-lbl">proyección de inflación para 2026 completo (REM del BCRA)</div></div>
+    </div>
+
+    <div class="callout gold">
+      <div class="callout-lead">La segunda decisión: ¿en qué moneda?</div>
+      <div class="callout-body">En cualquier mercado del mundo, elegir un instrumento de renta fija es elegir <strong>plazo y riesgo de crédito</strong>. En Argentina hay una tercera variable que pesa tanto o más: <strong>la moneda</strong>.<br><br>Un instrumento en pesos compite contra la inflación local. Uno en dólares compite contra la inflación del dólar (~2-3% anual) y te protege del tipo de cambio, pero suele rendir menos en términos nominales. No hay una respuesta única — depende de para qué es la plata y cuándo la vas a necesitar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S3: EL MAPA -->
+<section class="module" id="s3">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">03</span><div class="mod-divline"></div><span class="mod-tag">El Mapa</span></div>
+    <h2 class="mod-title">Todo el universo en una pantalla</h2>
+    <p class="mod-sub">Nueve instrumentos, dos monedas. Ordenados dentro de cada columna de menor a mayor riesgo y plazo. Hacé clic en cualquiera para ir directo a su detalle.</p>
+
+    <div class="mapa-col">
+      <div class="mapa-side">
+        <div class="mapa-head pesos">En pesos <span class="mapa-sub">Compiten contra la inflación local</span></div>
+        <div class="mapa-item" data-target="i-pf"><span class="mapa-name">Plazo fijo bancario</span><span class="mapa-rate">16–23% TNA</span></div>
+        <div class="mapa-item" data-target="i-mm"><span class="mapa-name">Money Market (FCI)</span><span class="mapa-rate">27–29% TNA</span></div>
+        <div class="mapa-item" data-target="i-cau"><span class="mapa-name">Cauciones bursátiles</span><span class="mapa-rate">19–20% TNA</span></div>
+        <div class="mapa-item" data-target="i-lecap"><span class="mapa-name">LECAPs / BONCAPs</span><span class="mapa-rate">1,6–2,5% TEM</span></div>
+        <div class="mapa-item" data-target="i-cer"><span class="mapa-name">FCI CER</span><span class="mapa-rate">Inflación + spread</span></div>
+        <div class="mapa-item" data-target="i-dl"><span class="mapa-name">FCI Dollar-linked</span><span class="mapa-rate">Sigue al oficial</span></div>
+      </div>
+      <div class="mapa-side">
+        <div class="mapa-head usd">En dólares <span class="mapa-sub">Renta en moneda dura</span></div>
+        <div class="mapa-item" data-target="i-fciusd"><span class="mapa-name">FCI en dólares</span><span class="mapa-rate">3–6% anual</span></div>
+        <div class="mapa-item" data-target="i-on"><span class="mapa-name">Obligaciones Negociables</span><span class="mapa-rate">4–11% TIR</span></div>
+        <div class="mapa-item" data-target="i-sob"><span class="mapa-name">Bonos soberanos</span><span class="mapa-rate">6–7% TIR</span></div>
+        <div style="padding:16px 18px;font-size:11.5px;color:var(--ts);line-height:1.6;font-style:italic;border-top:1px solid var(--bd)">Menos instrumentos, pero son los que más creció en volumen en los últimos años. Las ONs se consolidaron como el refugio preferido del ahorrista argentino que quiere renta en dólares.</div>
+      </div>
+    </div>
+    <p class="footnote">Rendimientos de referencia a agosto 2026. Las tasas en pesos cambian con las decisiones del BCRA; las TIR en dólares varían con el precio de mercado de cada título.</p>
+  </div>
+</section>
+
+<!-- S4: EN PESOS -->
+<section class="module alt" id="s4">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">04</span><div class="mod-divline"></div><span class="mod-tag">Instrumentos en Pesos</span></div>
+    <h2 class="mod-title">Seis formas de hacer rendir los pesos</h2>
+    <p class="mod-sub">Ordenados de menor a mayor plazo y complejidad. Todos compiten contra la misma vara: <strong>la inflación</strong>. Hacé clic en cualquiera para ver a favor y en contra.</p>
+    <div id="pesosGrid"></div>
+    <div class="callout">
+      <div class="callout-lead">¿Por qué el Money Market rinde más que la caución?</div>
+      <div class="callout-body">Parece contraintuitivo — el Money Market es el instrumento más simple y accesible, y sin embargo hoy rinde más que una caución. La razón es la composición: un FCI Money Market no coloca todo en cauciones, sino que combina <strong>plazos fijos bancarios mayoristas, cauciones y cuentas remuneradas</strong>, negociando tasas que un inversor individual no consigue por su cuenta. Esa escala es lo que explica la diferencia. En otros momentos del ciclo de tasas la relación puede invertirse.</div>
+    </div>
+  </div>
+</section>
+
+<!-- S5: EN DÓLARES -->
+<section class="module" id="s5">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">05</span><div class="mod-divline"></div><span class="mod-tag">Instrumentos en Dólares</span></div>
+    <h2 class="mod-title">Renta en moneda dura</h2>
+    <p class="mod-sub">Acá el objetivo cambia: ya no es ganarle a la inflación argentina, sino <strong>generar renta sobre dólares que ya tenés</strong> sin exponerte al tipo de cambio. Menos instrumentos, pero es el segmento que más creció en los últimos años.</p>
+    <div id="usdGrid"></div>
+    <div class="callout gold">
+      <div class="callout-lead">Hard dollar vs. dollar-linked — la distinción que hay que entender</div>
+      <div class="callout-body">
+        <strong>Hard dollar:</strong> el instrumento paga en dólares reales. Comprás con dólares y cobrás dólares. La mayoría de las ONs de las grandes empresas y los bonos soberanos funcionan así.<br><br>
+        <strong>Dollar-linked:</strong> el instrumento está denominado en dólares pero <strong>paga en pesos</strong> al tipo de cambio del día. Te protege de una devaluación, pero al final del camino tenés pesos, no dólares.<br><br>
+        No son mejores ni peores — resuelven problemas distintos. Si el objetivo es tener dólares, hard dollar. Si el objetivo es que los pesos no pierdan contra el dólar, dollar-linked.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S6: COMPARACIÓN -->
+<section class="module alt" id="s6">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">06</span><div class="mod-divline"></div><span class="mod-tag">Comparación</span></div>
+    <h2 class="mod-title">Todo junto, en tres ejes</h2>
+    <p class="mod-sub">Ningún instrumento es mejor que otro en abstracto. Lo que existe es un <strong>intercambio</strong>: más rendimiento se paga con menos liquidez, más riesgo, o ambos. Estos tres gráficos muestran ese intercambio.</p>
+
+    <div class="comp-tabs">
+      <button class="comp-tab active" data-comp="rend">Rendimiento</button>
+      <button class="comp-tab" data-comp="liq">Liquidez</button>
+      <button class="comp-tab" data-comp="riesgo">Riesgo</button>
+    </div>
+
+    <div class="comp-panel active" id="comp-rend">
+      <div class="sec-intro">Rendimiento anual estimado. Los instrumentos en pesos se muestran en TNA; los de dólares, en TIR anual en USD. <strong>No son directamente comparables entre sí</strong> — compiten contra inflaciones distintas.</div>
+      <div id="rendGrid"></div>
+      <p class="footnote">Referencia agosto 2026. La barra de inflación marca la vara que los instrumentos en pesos deben superar para no perder poder adquisitivo.</p>
+    </div>
+
+    <div class="comp-panel" id="comp-liq">
+      <div class="sec-intro">Cuántos días tardás en tener el dinero disponible desde que decidís salir. Menos días es más flexibilidad — y suele pagarse con menos rendimiento.</div>
+      <div id="liqGrid"></div>
+      <p class="footnote">En instrumentos que cotizan en mercado (LECAPs, ONs, bonos), la liquidez técnica es rápida, pero el precio de salida depende del mercado ese día.</p>
+    </div>
+
+    <div class="comp-panel" id="comp-riesgo">
+      <div class="sec-intro">Quién está detrás de cada instrumento y qué tan probable es que no pague. El riesgo no es solo de default — también es de precio, de plazo y de moneda.</div>
+      <div id="riesgoGrid"></div>
+      <p class="footnote">Escala cualitativa de referencia, elaborada sobre quién es el emisor, si hay garantía, y la volatilidad histórica del precio del instrumento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S7: ¿CUÁL ME CONVIENE? -->
+<section class="module" id="s7">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">07</span><div class="mod-divline"></div><span class="mod-tag">Guía por Objetivo</span></div>
+    <h2 class="mod-title">¿Cuál me conviene?</h2>
+    <p class="mod-sub">La pregunta correcta no es "cuál rinde más" sino <strong>"para qué es esta plata y cuándo la voy a necesitar"</strong>. Estas son las situaciones más comunes y por dónde suele empezar la conversación.</p>
+    <div class="obj-list" id="objList"></div>
+    <p class="footnote">Este mapa es orientativo y educativo. La elección concreta depende del perfil, el horizonte y la situación particular de cada persona — se define en el proceso de diagnóstico, no en una tabla general.</p>
+  </div>
+</section>
+
+<!-- S8: GLOSARIO -->
+<section class="module alt" id="s8">
+  <div class="module-inner">
+    <div class="mod-head"><span class="mod-num">08</span><div class="mod-divline"></div><span class="mod-tag">Glosario</span></div>
+    <h2 class="mod-title">Los términos que vas a escuchar</h2>
+    <p class="mod-sub">El mercado argentino de renta fija tiene su propio vocabulario. Estos son los términos que aparecen en cualquier pantalla de broker o informe.</p>
+    <div class="gloss-grid" id="glossGrid"></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <div class="foot-t">Renta Fija en Argentina · Mapa de instrumentos</div>
+    Datos de referencia a agosto 2026. Los rendimientos indicados son orientativos a la fecha de publicación, cambian con frecuencia y no garantizan retornos futuros.<br>
+    Este material tiene fines exclusivamente educativos y no constituye asesoramiento financiero, recomendación de inversión ni oferta de compra o venta de instrumentos.<br>
+    Consultá con un profesional matriculado antes de tomar decisiones de inversión, y con un contador respecto del tratamiento impositivo aplicable a tu situación.
+  </div>
+</footer>
+
+<script>
+// ============ INSTRUMENTOS EN PESOS ============
+var pesos=[
+  {id:'i-pf',ico:'🏛',ib:'#eeece8',cls:'ref',name:'Plazo fijo bancario',sub:'Punto de referencia',
+   desc:'El instrumento más conocido del ahorro argentino. Depositás en un banco a 30 días y cobrás una tasa fija. No es del mercado de capitales, pero sirve como vara de comparación.',
+   rate:'16–23%',rateL:'TNA',
+   liq:'30 días fijos',riesgo:'Bajo (banco)',plazo:'30 días mínimo',tax:'Tributa Ganancias',taxCls:'tax-no',
+   acc:'Desde el homebanking de cualquier banco. <strong>Mínimo: variable</strong>, generalmente desde $1.000.',
+   pro:['Simple y conocido','Garantía de depósitos hasta cierto monto','No requiere cuenta comitente'],
+   con:['El capital queda inmovilizado 30 días','Si lo cancelás antes perdés los intereses','Hoy rinde menos que casi todo el resto','Tributa Ganancias']},
+
+  {id:'i-mm',ico:'💧',ib:'#E1F5EE',name:'Money Market (FCI)',
+   desc:'Fondo Común de Inversión que coloca en plazos fijos mayoristas, cauciones y cuentas remuneradas. Rescate el mismo día, sin plazo mínimo. El reemplazo natural de la caja de ahorro.',
+   rate:'27–29%',rateL:'TNA',
+   liq:'Inmediata (T+0)',riesgo:'Muy bajo',plazo:'Sin mínimo',tax:'Tributa Ganancias',taxCls:'tax-no',
+   acc:'Broker local (Balanz, IOL, PPI, Cocos), homebanking o billetera virtual. <strong>Mínimo: desde $1</strong>.',
+   pro:['Liquidez inmediata — entrás y salís cuando querés','Sin plazo mínimo ni penalidad','Hoy rinde más que el plazo fijo','Accesible desde cualquier monto'],
+   con:['La tasa baja cuando el BCRA baja tasas','No tiene rendimiento garantizado','En términos reales puede quedar debajo de la inflación']},
+
+  {id:'i-cau',ico:'🤝',ib:'#E6F1FB',name:'Cauciones bursátiles',
+   desc:'Un préstamo de muy corto plazo entre inversores, operado en la Bolsa. Vos prestás pesos, el tomador deja activos en garantía, y BYMA garantiza la operación. Plazos de 1 a 120 días.',
+   rate:'19–20%',rateL:'TNA a 1 día',
+   liq:'Desde 1 día',riesgo:'Muy bajo (BYMA)',plazo:'1 a 120 días',tax:'Puede tributar',taxCls:'tax-no',
+   acc:'Solo desde broker con cuenta comitente. <strong>Mínimo: variable según broker</strong>, típicamente desde $10.000.',
+   pro:['Garantizadas por el mercado — nunca hubo default','Plazos a medida, desde 1 día','Ideal para pesos que se usan en días, no meses','Tasa conocida de antemano'],
+   con:['Requiere cuenta comitente en un broker','Las comisiones reducen el rendimiento real','Hoy rinde menos que un Money Market','Tratamiento impositivo variable']},
+
+  {id:'i-lecap',ico:'📜',ib:'#FAEEDA',name:'LECAPs y BONCAPs',sub:'Letras del Tesoro',
+   desc:'Deuda del Tesoro Nacional en pesos a tasa fija que capitaliza mensualmente. Se llama LECAP si vence en menos de un año, BONCAP si vence después. Operativamente son idénticas.',
+   rate:'1,6–2,5%',rateL:'TEM según plazo',
+   liq:'T+1 (venta en mercado)',riesgo:'Bajo-medio (Tesoro)',plazo:'1 a 24 meses',tax:'Exento',taxCls:'tax-ok',
+   acc:'Broker local, mercado primario (licitación) o secundario. <strong>Mínimo: desde $1.000 VNO</strong>.',
+   pro:['Exentas de Ganancias y Bienes Personales','Tasa conocida desde el día 1','Se pueden vender antes del vencimiento','Suelen superar al plazo fijo'],
+   con:['Si vendés antes, el precio depende del mercado','Tasa fija: si la inflación sube, perdés en términos reales','Riesgo de crédito del Tesoro Nacional','Requiere entender la curva de rendimientos']},
+
+  {id:'i-cer',ico:'📈',ib:'#EEEDFE',name:'FCI CER',sub:'Ajuste por inflación',
+   desc:'Fondo que invierte en bonos indexados por CER — es decir, que ajustan su capital por la inflación oficial. El objetivo no es ganar mucho, sino no perder contra los precios.',
+   rate:'Inflación',rateL:'+ spread real',
+   liq:'T+1 / T+2',riesgo:'Medio',plazo:'6+ meses',tax:'Tributa Ganancias',taxCls:'tax-no',
+   acc:'Broker local o homebanking. <strong>Mínimo: desde $1.000</strong> según el fondo.',
+   pro:['Protege el poder adquisitivo en pesos','Buena opción cuando la inflación sorprende al alza','Gestión delegada — no elegís bonos uno por uno'],
+   con:['El ajuste CER se publica con rezago','Si la inflación baja rápido, rinde menos que tasa fija','El precio de los bonos subyacentes fluctúa','No conviene para plazos cortos']},
+
+  {id:'i-dl',ico:'💱',ib:'#E6F1FB',name:'FCI Dollar-linked',
+   desc:'Fondo en pesos que sigue la evolución del dólar oficial. Invertís pesos, cobrás pesos — pero el rendimiento acompaña al tipo de cambio. Es cobertura cambiaria, no dolarización real.',
+   rate:'Tipo de cambio',rateL:'oficial + spread',
+   liq:'T+1 / T+2',riesgo:'Medio',plazo:'3+ meses',tax:'Tributa Ganancias',taxCls:'tax-no',
+   acc:'Broker local o homebanking. <strong>Mínimo: desde $1.000</strong> según el fondo.',
+   pro:['Cobertura ante una devaluación del oficial','No requiere comprar dólares','Accesible desde poco capital'],
+   con:['Si el tipo de cambio no se mueve, rinde poco o nada','Sigue al oficial, no al MEP ni al CCL','Al final tenés pesos, no dólares','El rendimiento no está garantizado']}
+];
+
+// ============ INSTRUMENTOS EN USD ============
+var usd=[
+  {id:'i-fciusd',ico:'📦',ib:'#E1F5EE',name:'FCI en dólares',
+   desc:'Fondo que invierte en ONs y bonos en moneda dura. Es la forma más simple de tener renta en dólares sin elegir emisor por emisor — la gestión la hace el fondo.',
+   rate:'3–6%',rateL:'anual USD',
+   liq:'T+1 / T+2',riesgo:'Bajo-medio',plazo:'6+ meses',tax:'Tributa Ganancias',taxCls:'tax-no',
+   acc:'Broker local o homebanking. <strong>Mínimo: desde USD 100</strong> según el fondo.',
+   pro:['Diversificación instantánea entre emisores','No requiere analizar cada ON','Accesible desde poco capital','Gestión profesional delegada'],
+   con:['Comisión de administración reduce el rendimiento','Menor rendimiento que elegir ONs directamente','Tributa Ganancias, a diferencia de las ONs']},
+
+  {id:'i-on',ico:'🏢',ib:'#FAEEDA',name:'Obligaciones Negociables',sub:'ONs corporativas',
+   desc:'Deuda emitida por empresas argentinas en dólares. Comprás el bono, cobrás cupones semestrales en dólares, y al vencimiento te devuelven el capital. Se convirtió en el instrumento preferido del ahorrista que quiere renta en moneda dura.',
+   rate:'4–11%',rateL:'TIR anual USD',
+   liq:'T+1 (venta en mercado)',riesgo:'Medio (corporativo)',plazo:'2 a 10 años',tax:'Exento Ganancias',taxCls:'tax-ok',
+   acc:'Broker local, licitación primaria o mercado secundario. <strong>Mínimo: desde USD 100</strong> en primaria, menos en secundario.',
+   pro:['Renta predecible en dólares reales (hard dollar)','Exentas del impuesto a las Ganancias','Emisores de primera línea: YPF, Pampa, Vista, Tecpetrol, Telecom','Volatilidad mucho menor que las acciones'],
+   con:['Riesgo de crédito: si la empresa no paga, perdés','El precio fluctúa si vendés antes del vencimiento','Alcanzadas por Bienes Personales','Menos líquidas que un bono soberano'],
+   note:{lbl:'Rendimientos de referencia por emisor',txt:'Los rendimientos varían por empresa y plazo. En el tramo corto, emisiones de <strong>Tecpetrol rinden ~4,2%</strong> y <strong>Pampa ~5,7%</strong>. En el tramo largo, <strong>Vista ~7,3%</strong>, <strong>Pampa ~7,3%</strong>, <strong>Tecpetrol ~7,2%</strong>, y emisiones de mayor riesgo como <strong>YPF Luz 2032 llegan a ~11,3%</strong>. A mayor plazo y mayor apalancamiento del emisor, mayor rendimiento — y mayor riesgo.'}},
+
+  {id:'i-sob',ico:'🏛',ib:'#FCEBEB',name:'Bonos soberanos',sub:'AL30 · GD30 · AE38',
+   desc:'Deuda del Estado argentino en dólares. Los Bonares (AL) son ley argentina; los Globales (GD) son ley Nueva York. Se usan tanto para generar renta como para operar dólar MEP.',
+   rate:'6–7%',rateL:'TIR anual USD',
+   liq:'T+1 (venta en mercado)',riesgo:'Alto (soberano)',plazo:'4 a 20 años',tax:'Exento Ganancias',taxCls:'tax-ok',
+   acc:'Broker local, mercado secundario. <strong>Mínimo: desde USD 100</strong> aproximadamente.',
+   pro:['Muy líquidos — los títulos más operados del mercado','Exentos del impuesto a las Ganancias','Vía de acceso al dólar MEP','Potencial de apreciación si baja el riesgo país'],
+   con:['Riesgo soberano: Argentina ya no pagó varias veces','El precio es muy sensible a la política y la macro','La TIR que ves hoy no es la que cobrás si vendés antes','Volatilidad alta para ser renta fija'],
+   warn:{lbl:'Una advertencia necesaria',txt:'Los bonos soberanos argentinos <strong>no son un instrumento conservador</strong>, aunque estén clasificados como renta fija. Argentina reestructuró su deuda en 2005, 2010 y 2020 — los inversores que tenían esos bonos cobraron mucho menos de lo prometido. Hoy cotizan por debajo de la par justamente porque el mercado le asigna una probabilidad real a que eso vuelva a ocurrir. El riesgo país en torno a los 420–445 puntos básicos es la medida de esa desconfianza. Pueden tener lugar en una cartera, pero como componente de riesgo, no como base.'}}
+];
+
+function buildCards(list,containerId){
+  var g=document.getElementById(containerId);
+  list.forEach(function(a){
+    var card=document.createElement('div');
+    card.className='icard'+(a.cls?' '+a.cls:'');
+    card.id=a.id;
+    var pros=a.pro.map(function(p){return'<div class="pc-item">'+p+'</div>'}).join('');
+    var cons=a.con.map(function(c){return'<div class="pc-item">'+c+'</div>'}).join('');
+    var extra='';
+    if(a.note)extra+='<div class="ic-note"><span class="ic-note-l">'+a.note.lbl+'</span>'+a.note.txt+'</div>';
+    if(a.warn)extra+='<div class="ic-warn"><span class="ic-warn-l">'+a.warn.lbl+'</span>'+a.warn.txt+'</div>';
+    card.innerHTML=
+      '<div class="ic-top"><div class="ic-ico" style="background:'+a.ib+'">'+a.ico+'</div>'
+      +'<div class="ic-htxt"><div class="ic-name">'+a.name+'</div>'
+      +(a.sub?'<div class="ic-sub">'+a.sub+'</div>':'')
+      +'<div class="ic-desc">'+a.desc+'</div></div>'
+      +'<div class="ic-rate"><div class="ic-rate-n">'+a.rate+'</div><div class="ic-rate-l">'+a.rateL+'</div></div></div>'
+      +'<div class="ic-meta">'
+      +'<div class="ic-mi"><span class="ic-ml">Liquidez</span><span class="ic-mv">'+a.liq+'</span></div>'
+      +'<div class="ic-mi"><span class="ic-ml">Riesgo</span><span class="ic-mv">'+a.riesgo+'</span></div>'
+      +'<div class="ic-mi"><span class="ic-ml">Horizonte</span><span class="ic-mv">'+a.plazo+'</span></div>'
+      +'<div class="ic-mi"><span class="ic-ml">Impuesto</span><span class="ic-mv '+a.taxCls+'">'+a.tax+'</span></div></div>'
+      +'<div class="ic-access"><div class="ic-access-l">Cómo acceder</div>'+a.acc+'</div>'
+      +'<div class="ic-hint">Clic para ver a favor y en contra</div>'
+      +'<div class="ic-detail"><div class="pc-row"><div class="pc-col pro"><div class="pc-col-t">A favor</div>'+pros+'</div>'
+      +'<div class="pc-col con"><div class="pc-col-t">En contra</div>'+cons+'</div></div>'+extra+'</div>';
+    card.onclick=function(){card.classList.toggle('open')};
+    g.appendChild(card);
+  });
+}
+buildCards(pesos,'pesosGrid');
+buildCards(usd,'usdGrid');
+
+// ============ COMPARADORES ============
+function buildBars(data,containerId,maxVal){
+  var g=document.getElementById(containerId);
+  data.forEach(function(d){
+    var pct=Math.max(Math.round(d.v/maxVal*100),11);
+    var row=document.createElement('div');row.className='comp-row';
+    row.innerHTML='<div class="comp-lbl">'+d.l+'<span class="comp-cur">'+d.c+'</span></div>'
+      +'<div class="comp-track"><div class="comp-fill" style="width:'+pct+'%;background:'+d.col+'"><span class="comp-val">'+d.t+'</span></div></div>';
+    g.appendChild(row);
+  });
+}
+
+buildBars([
+  {l:'Inflación',c:'La vara a superar',v:33.5,t:'33,5% anual',col:'#A32D2D'},
+  {l:'Plazo fijo',c:'Pesos',v:19,t:'~19% TNA',col:'#8a8a8a'},
+  {l:'Cauciones',c:'Pesos',v:19.5,t:'~19,5% TNA',col:'#0C447C'},
+  {l:'LECAPs',c:'Pesos',v:24,t:'~24% TEA',col:'#BA7517'},
+  {l:'Money Market',c:'Pesos',v:28,t:'~28% TNA',col:'#1D9E75'},
+  {l:'FCI en dólares',c:'Dólares',v:4.5,t:'~4,5% USD',col:'#3B6D11'},
+  {l:'ONs corporativas',c:'Dólares',v:7,t:'4–11% USD',col:'#8A6534'},
+  {l:'Bonos soberanos',c:'Dólares',v:6.5,t:'~6,5% USD',col:'#7F77DD'}
+],'rendGrid',33.5);
+
+buildBars([
+  {l:'Money Market',c:'Mismo día',v:1,t:'Inmediata',col:'#1D9E75'},
+  {l:'Cauciones',c:'Desde 1 día',v:2,t:'1 día',col:'#0C447C'},
+  {l:'LECAPs',c:'Venta en mercado',v:3,t:'1 día (T+1)',col:'#BA7517'},
+  {l:'ONs corporativas',c:'Venta en mercado',v:3,t:'1 día (T+1)',col:'#8A6534'},
+  {l:'Bonos soberanos',c:'Venta en mercado',v:3,t:'1 día (T+1)',col:'#7F77DD'},
+  {l:'FCI CER / USD',c:'Rescate del fondo',v:5,t:'1 a 2 días',col:'#3B6D11'},
+  {l:'Plazo fijo',c:'Plazo cerrado',v:30,t:'30 días',col:'#A32D2D'}
+],'liqGrid',30);
+
+buildBars([
+  {l:'Money Market',c:'Cartera diversificada',v:1.5,t:'Muy bajo',col:'#1D9E75'},
+  {l:'Cauciones',c:'Garantiza BYMA',v:1.5,t:'Muy bajo',col:'#1D9E75'},
+  {l:'Plazo fijo',c:'Riesgo del banco',v:2,t:'Bajo',col:'#3B6D11'},
+  {l:'LECAPs',c:'Riesgo del Tesoro',v:3,t:'Bajo-medio',col:'#BA7517'},
+  {l:'FCI en dólares',c:'Cartera de ONs',v:3,t:'Bajo-medio',col:'#BA7517'},
+  {l:'FCI CER / Dollar-linked',c:'Precio fluctúa',v:3.5,t:'Medio',col:'#BA7517'},
+  {l:'ONs corporativas',c:'Riesgo de la empresa',v:4,t:'Medio',col:'#8A6534'},
+  {l:'Bonos soberanos',c:'Riesgo del Estado',v:5,t:'Alto',col:'#A32D2D'}
+],'riesgoGrid',5);
+
+document.querySelectorAll('.comp-tab').forEach(function(tab){
+  tab.onclick=function(){
+    document.querySelectorAll('.comp-tab').forEach(function(t){t.classList.remove('active')});
+    document.querySelectorAll('.comp-panel').forEach(function(p){p.classList.remove('active')});
+    tab.classList.add('active');
+    document.getElementById('comp-'+tab.dataset.comp).classList.add('active');
+  };
+});
+
+// ============ GUÍA POR OBJETIVO ============
+var objetivos=[
+  {q:'"Tengo pesos que voy a usar en los próximos días o semanas"',
+   d:'Plata de trabajo, el sueldo antes de gastarlo, o capital esperando una oportunidad. Lo que importa acá es la disponibilidad, no el rendimiento.',
+   a:'Money Market o Caución'},
+  {q:'"Tengo pesos que no necesito por 3 a 12 meses y quiero fijar tasa"',
+   d:'Sabés que no vas a tocar esa plata en un plazo definido y querés saber desde hoy cuánto vas a tener al final. La apuesta implícita es que la inflación siga bajando.',
+   a:'LECAPs / BONCAPs'},
+  {q:'"Quiero que mis pesos no pierdan contra la inflación"',
+   d:'No buscás un rendimiento alto — buscás preservar poder adquisitivo. El objetivo es empatarle a los precios, no ganarle al mercado.',
+   a:'FCI CER'},
+  {q:'"Tengo dólares parados y quiero que generen renta"',
+   d:'Ya estás dolarizado y no querés volver a pesos. Buscás un flujo predecible en moneda dura, sin la volatilidad de las acciones.',
+   a:'ONs corporativas'},
+  {q:'"Quiero renta en dólares pero sin elegir empresa por empresa"',
+   d:'Te interesa el segmento pero no querés analizar balances ni seguir emisores. Preferís delegar la gestión aunque cueste algo de rendimiento.',
+   a:'FCI en dólares'},
+  {q:'"Quiero el mayor rendimiento en dólares y tolero volatilidad"',
+   d:'Entendés que el precio puede caer fuerte y que existe riesgo de reestructuración. Estás dispuesto a asumirlo a cambio de un rendimiento mayor.',
+   a:'Bonos soberanos'},
+  {q:'"Tengo pesos y quiero cubrirme de una devaluación"',
+   d:'No querés o no podés comprar dólares directamente, pero te preocupa que el tipo de cambio se mueva y tus pesos pierdan valor relativo.',
+   a:'FCI Dollar-linked'}
+];
+var ol=document.getElementById('objList');
+objetivos.forEach(function(o){
+  var d=document.createElement('div');d.className='obj';
+  d.innerHTML='<div class="obj-q"><div class="obj-qt">'+o.q+'</div><div class="obj-qd">'+o.d+'</div></div>'
+    +'<div class="obj-a"><div class="obj-al">Suele empezar por</div><div class="obj-an">'+o.a+'</div></div>';
+  ol.appendChild(d);
+});
+
+// ============ GLOSARIO ============
+var glossary=[
+  {t:'TNA — Tasa Nominal Anual',d:'El rendimiento anualizado sin considerar la capitalización. Es el número que publican los bancos y brokers. Sirve para comparar instrumentos de distinto plazo, pero no es lo que efectivamente ganás en un año.'},
+  {t:'TEA — Tasa Efectiva Anual',d:'El rendimiento real de un año considerando que los intereses se reinvierten. Siempre es mayor que la TNA cuando hay capitalización. Es la medida más honesta para comparar.'},
+  {t:'TEM — Tasa Efectiva Mensual',d:'El rendimiento efectivo de un mes. Es la medida estándar para LECAPs y para comparar contra la inflación mensual, que es como se publica en Argentina.'},
+  {t:'TIR — Tasa Interna de Retorno',d:'El rendimiento anualizado que obtenés si mantenés un bono hasta el vencimiento y cobrás todos los pagos prometidos. Si vendés antes, la TIR que realizás puede ser distinta.'},
+  {t:'CER',d:'Coeficiente de Estabilización de Referencia. Índice que ajusta el capital de ciertos bonos por la inflación oficial del INDEC. Un bono CER protege el poder adquisitivo en pesos.'},
+  {t:'Hard dollar',d:'Instrumento que paga en dólares reales — comprás con dólares y cobrás dólares. La mayoría de las ONs de grandes empresas y los bonos soberanos funcionan así.'},
+  {t:'Dollar-linked',d:'Instrumento denominado en dólares pero que paga en pesos al tipo de cambio del día. Protege de una devaluación, pero al final tenés pesos, no dólares.'},
+  {t:'Paridad',d:'El precio del bono como porcentaje de su valor nominal. Una paridad de 91% significa que pagás $91 por cada $100 de valor nominal. Bajo la par implica mayor TIR.'},
+  {t:'Duration',d:'Medida de cuán sensible es el precio de un bono a los cambios de tasa. A mayor duration, más se mueve el precio ante cambios en el mercado. Los bonos largos tienen más duration.'},
+  {t:'Riesgo país',d:'La sobretasa que Argentina paga sobre los bonos del Tesoro de EEUU, medida en puntos básicos. Más riesgo país = el mercado exige más rendimiento por prestarle al Estado argentino.'},
+  {t:'VNO — Valor Nominal Original',d:'El valor de referencia de un título, no su precio de mercado. Las LECAPs se compran por VNO: 1.000 VNO no significa que pagás $1.000, sino el precio de mercado de esa cantidad.'},
+  {t:'ALyC',d:'Agente de Liquidación y Compensación. Es la figura regulada por la CNV que habilita a un broker a operar en el mercado. Balanz, IOL, PPI y Cocos son ALyCs.'},
+  {t:'Cuenta comitente',d:'La cuenta que abrís en un broker para operar en el mercado de capitales. Es distinta de una cuenta bancaria: los títulos quedan a tu nombre, segregados del patrimonio del broker.'},
+  {t:'Mercado primario vs secundario',d:'Primario es cuando comprás en la licitación original del emisor. Secundario es cuando le comprás a otro inversor en el mercado, al precio que cotice ese día.'}
+];
+var gg=document.getElementById('glossGrid');
+glossary.forEach(function(g){
+  var d=document.createElement('div');d.className='gitem';
+  d.innerHTML='<div class="gterm">'+g.t+'</div><div class="gdef">'+g.d+'</div>';
+  gg.appendChild(d);
+});
+
+// ============ NAV ============
+function goTo(id){var el=document.getElementById(id);if(el)window.scrollTo({top:el.offsetTop-52,behavior:'smooth'})}
+document.querySelectorAll('.nav-item[data-target],.map-cell[data-target]').forEach(function(n){
+  n.onclick=function(){goTo(n.dataset.target)};
+});
+document.querySelectorAll('.mapa-item[data-target]').forEach(function(m){
+  m.onclick=function(){
+    var el=document.getElementById(m.dataset.target);
+    if(el){window.scrollTo({top:el.offsetTop-60,behavior:'smooth'});el.classList.add('open')}
+  };
+});
+
+var navItems=document.querySelectorAll('.nav-item[data-target]');
+var sections=['s1','s2','s3','s4','s5','s6','s7','s8'];
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120,current='s1';
+  sections.forEach(function(id){var el=document.getElementById(id);if(el&&el.offsetTop<=pos)current=id});
+  navItems.forEach(function(n){n.classList.toggle('active',n.dataset.target===current)});
+});
+</script>
+
+</body>
+</html>
